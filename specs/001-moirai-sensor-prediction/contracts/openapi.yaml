@@ -1,0 +1,579 @@
+openapi: 3.1.0
+info:
+  title: Moirai Sensor Failure Prediction API
+  description: |
+    API for predicting sensor failures using the Moirai time-series forecasting model.
+    Integrates with existing EAIMMS database on Railway.
+  version: 1.0.0
+  contact:
+    name: Platform45 ML Team
+
+servers:
+  - url: /api/v1
+    description: API version 1
+
+paths:
+  /predictions/run:
+    post:
+      summary: Run prediction for specific points
+      description: |
+        Fetch sensor data from EAIMMS database for specified monitoring points,
+        run Moirai predictions, and save results to moirai_predictions table.
+      operationId: runPrediction
+      tags:
+        - Predictions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RunPredictionRequest'
+      responses:
+        '200':
+          description: Predictions generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunPredictionResponse'
+        '400':
+          description: Invalid request (e.g., insufficient data for prediction)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /predictions/run-all:
+    post:
+      summary: Run predictions for all eligible points
+      description: |
+        Find all monitoring points with sufficient historical data (≥5 readings)
+        and run predictions for each.
+      operationId: runAllPredictions
+      tags:
+        - Predictions
+      responses:
+        '200':
+          description: Batch predictions initiated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunAllResponse'
+
+  /predictions:
+    get:
+      summary: List predictions
+      description: Retrieve predictions with optional filtering
+      operationId: listPredictions
+      tags:
+        - Predictions
+      parameters:
+        - name: risk_level
+          in: query
+          schema:
+            type: string
+            enum: [HIGH, MEDIUM, LOW]
+        - name: point_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, confirmed, dismissed]
+        - name: from_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: List of predictions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PredictionListResponse'
+
+  /predictions/export:
+    get:
+      summary: Export predictions
+      description: Export prediction results in CSV or JSON format
+      operationId: exportPredictions
+      tags:
+        - Predictions
+      parameters:
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [csv, json]
+            default: csv
+        - name: risk_level
+          in: query
+          schema:
+            type: string
+            enum: [HIGH, MEDIUM, LOW]
+        - name: from_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Export file
+          content:
+            text/csv:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PredictionExport'
+
+  /predictions/{prediction_id}:
+    get:
+      summary: Get prediction details
+      operationId: getPrediction
+      tags:
+        - Predictions
+      parameters:
+        - name: prediction_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Prediction details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prediction'
+        '404':
+          description: Prediction not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    patch:
+      summary: Update prediction status
+      description: Confirm or dismiss a prediction
+      operationId: updatePrediction
+      tags:
+        - Predictions
+      parameters:
+        - name: prediction_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePredictionRequest'
+      responses:
+        '200':
+          description: Prediction updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prediction'
+
+  /points:
+    get:
+      summary: List monitoring points
+      description: Retrieve monitoring points from EAIMMS with their latest prediction
+      operationId: listPoints
+      tags:
+        - Points
+      parameters:
+        - name: has_prediction
+          in: query
+          schema:
+            type: boolean
+          description: Filter to points with/without predictions
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: List of monitoring points
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PointListResponse'
+
+  /points/{point_id}/readings:
+    get:
+      summary: Get sensor readings for a point
+      description: Retrieve time-series data from monitoring_plans_task_results
+      operationId: getPointReadings
+      tags:
+        - Points
+      parameters:
+        - name: point_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: from_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Time-series readings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadingsResponse'
+
+  /dashboard/summary:
+    get:
+      summary: Get dashboard summary
+      description: Retrieve risk statistics for dashboard display
+      operationId: getDashboardSummary
+      tags:
+        - Dashboard
+      responses:
+        '200':
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardSummary'
+
+  /health:
+    get:
+      summary: Health check
+      description: Check API, database, and model health status
+      operationId: healthCheck
+      tags:
+        - System
+      responses:
+        '200':
+          description: System healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+components:
+  schemas:
+    RunPredictionRequest:
+      type: object
+      required:
+        - point_ids
+      properties:
+        point_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: Monitoring point IDs to run predictions for
+          minItems: 1
+          maxItems: 100
+
+    RunPredictionResponse:
+      type: object
+      properties:
+        predictions_created:
+          type: integer
+        predictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Prediction'
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              point_id:
+                type: string
+                format: uuid
+              error:
+                type: string
+
+    RunAllResponse:
+      type: object
+      properties:
+        eligible_points:
+          type: integer
+        predictions_created:
+          type: integer
+        errors_count:
+          type: integer
+        message:
+          type: string
+
+    Prediction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        point_id:
+          type: string
+          format: uuid
+        point_name:
+          type: string
+        equipment_id:
+          type: string
+          format: uuid
+        equipment_name:
+          type: string
+        risk_level:
+          type: string
+          enum: [HIGH, MEDIUM, LOW]
+        confidence_score:
+          type: number
+          minimum: 0
+          maximum: 100
+        predicted_failure_start:
+          type: string
+          format: date-time
+        predicted_failure_end:
+          type: string
+          format: date-time
+        context_start:
+          type: string
+          format: date-time
+        context_end:
+          type: string
+          format: date-time
+        readings_analyzed:
+          type: integer
+        model_version:
+          type: string
+        status:
+          type: string
+          enum: [pending, confirmed, dismissed]
+        acknowledged_by_id:
+          type: string
+          format: uuid
+        acknowledged_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+
+    PredictionListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Prediction'
+        total:
+          type: integer
+        page:
+          type: integer
+        page_size:
+          type: integer
+        total_pages:
+          type: integer
+
+    PredictionExport:
+      type: object
+      properties:
+        point_id:
+          type: string
+        point_name:
+          type: string
+        equipment_name:
+          type: string
+        risk_level:
+          type: string
+        confidence_score:
+          type: number
+        predicted_failure_start:
+          type: string
+        predicted_failure_end:
+          type: string
+        status:
+          type: string
+        created_at:
+          type: string
+
+    UpdatePredictionRequest:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum: [confirmed, dismissed]
+
+    Point:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        readings_count:
+          type: integer
+        latest_reading:
+          type: object
+          properties:
+            value:
+              type: number
+            captured_at:
+              type: string
+              format: date-time
+        latest_prediction:
+          $ref: '#/components/schemas/Prediction'
+
+    PointListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Point'
+        total:
+          type: integer
+        page:
+          type: integer
+        page_size:
+          type: integer
+
+    ReadingsResponse:
+      type: object
+      properties:
+        point_id:
+          type: string
+          format: uuid
+        point_name:
+          type: string
+        readings:
+          type: array
+          items:
+            type: object
+            properties:
+              value:
+                type: number
+              captured_at:
+                type: string
+                format: date-time
+        total:
+          type: integer
+
+    DashboardSummary:
+      type: object
+      properties:
+        total_points:
+          type: integer
+        points_with_predictions:
+          type: integer
+        sensors_by_risk:
+          type: object
+          properties:
+            high:
+              type: integer
+            medium:
+              type: integer
+            low:
+              type: integer
+        recent_predictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Prediction'
+        high_risk_points:
+          type: array
+          items:
+            type: object
+            properties:
+              point_id:
+                type: string
+              point_name:
+                type: string
+              confidence_score:
+                type: number
+              predicted_failure_start:
+                type: string
+
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        database_connected:
+          type: boolean
+        model_loaded:
+          type: boolean
+        model_version:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+
+tags:
+  - name: Predictions
+    description: Moirai failure prediction operations
+  - name: Points
+    description: Monitoring points from EAIMMS
+  - name: Dashboard
+    description: Dashboard and summary data
+  - name: System
+    description: System health and status
