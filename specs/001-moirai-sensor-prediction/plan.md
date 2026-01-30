@@ -32,9 +32,7 @@ Primary goal: Prevent equipment downtime by catching problems early.
 |----------|-------|
 | Project | Applied-AI-Eng-Demo |
 | Service | eaimms-staging |
-| Host | gondola.proxy.rlwy.net |
-| Port | 59528 |
-| Database | railway |
+| Connection | Use `railway variables` to get DATABASE_URL |
 
 ### Tables Used
 

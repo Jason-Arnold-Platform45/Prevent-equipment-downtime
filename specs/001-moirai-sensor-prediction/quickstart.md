@@ -34,11 +34,19 @@ pip install -r requirements.txt
 
 ### 2. Environment Configuration
 
-Create a `.env` file in `backend/`:
+Create a `.env` file in `backend/` by pulling from Railway:
+
+```bash
+# Link to the project and pull environment variables
+railway link -p "Applied-AI-Eng-Demo" -s "eaimms-staging"
+railway variables > .env
+```
+
+Or create manually (get DATABASE_URL from `railway variables`):
 
 ```env
-# Railway Database (get from: railway variables)
-DATABASE_URL=postgresql://postgres:caG6CafAcDF4agc2a1bDGfF5aGCdfBc6@gondola.proxy.rlwy.net:59528/railway
+# Railway Database (get from: railway variables - DO NOT COMMIT)
+DATABASE_URL=postgresql://user:password@host:port/database
 
 # Moirai Model
 MOIRAI_MODEL=Salesforce/moirai-1.0-R-base
@@ -51,7 +59,7 @@ API_PORT=8000
 LOG_LEVEL=INFO
 ```
 
-Or pull from Railway:
+Alternatively, pull from Railway:
 
 ```bash
 railway link -p "Applied-AI-Eng-Demo" -s "eaimms-staging"

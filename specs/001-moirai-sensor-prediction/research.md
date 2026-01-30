@@ -66,8 +66,7 @@
 **Database Connection** (Railway):
 - **Project**: Applied-AI-Eng-Demo
 - **Service**: eaimms-staging (PostGIS)
-- **Host**: gondola.proxy.rlwy.net:59528
-- **Database**: railway
+- **Connection**: Use `railway variables` to get DATABASE_URL
 
 **Existing Tables Used**:
 | Table | Purpose | Records |
