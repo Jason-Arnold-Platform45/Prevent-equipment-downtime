@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Card, CardTitle, PageSpinner, Button } from '../components/ui'
 import { PredictionsList, PredictionCard, RunPredictionButton } from '../components/predictions'
-import { usePredictions } from '../hooks'
+import { usePredictions, useUpdatePrediction } from '../hooks'
 import type { Prediction, RiskLevel, PredictionStatus } from '../types/api'
 
 export function PredictionsPage() {
@@ -17,6 +17,8 @@ export function PredictionsPage() {
     page_size: 20,
   })
 
+  const updatePrediction = useUpdatePrediction()
+
   const handleRunSuccess = (result: { eligible_points: number; predictions_created: number }) => {
     alert(`Created ${result.predictions_created} predictions for ${result.eligible_points} eligible points`)
     refetch()
@@ -24,6 +26,38 @@ export function PredictionsPage() {
 
   const handleRunError = (error: Error) => {
     alert(`Error: ${error.message}`)
+  }
+
+  const handleConfirm = () => {
+    if (!selectedPrediction) return
+    updatePrediction.mutate(
+      { predictionId: selectedPrediction.id, request: { status: 'confirmed' } },
+      {
+        onSuccess: (updatedPrediction) => {
+          setSelectedPrediction(updatedPrediction)
+          refetch()
+        },
+        onError: (error) => {
+          alert(`Error: ${error.message}`)
+        },
+      }
+    )
+  }
+
+  const handleDismiss = () => {
+    if (!selectedPrediction) return
+    updatePrediction.mutate(
+      { predictionId: selectedPrediction.id, request: { status: 'dismissed' } },
+      {
+        onSuccess: (updatedPrediction) => {
+          setSelectedPrediction(updatedPrediction)
+          refetch()
+        },
+        onError: (error) => {
+          alert(`Error: ${error.message}`)
+        },
+      }
+    )
   }
 
   if (isLoading) {
@@ -128,7 +162,12 @@ export function PredictionsPage() {
 
         <div>
           {selectedPrediction ? (
-            <PredictionCard prediction={selectedPrediction} />
+            <PredictionCard
+              prediction={selectedPrediction}
+              onConfirm={handleConfirm}
+              onDismiss={handleDismiss}
+              isUpdating={updatePrediction.isPending}
+            />
           ) : (
             <Card>
               <CardTitle>Prediction Details</CardTitle>

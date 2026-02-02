@@ -78,7 +78,7 @@
 
 ---
 
-## Phase 4: User Story 2 - View Risk Dashboard (Priority: P2)
+## Phase 4: User Story 2 - View Risk Dashboard (Priority: P2) ✅
 
 **Goal**: Provide visual summary of sensor risk levels for maintenance prioritization
 
@@ -86,17 +86,17 @@
 
 ### Implementation
 
-- [ ] T026 [US2] Create useDashboardSummary hook in frontend/src/hooks/useDashboardSummary.ts - GET /dashboard/summary
-- [ ] T027 [P] [US2] Create RiskSummaryCard component in frontend/src/components/dashboard/RiskSummaryCard.tsx - show high/medium/low counts
-- [ ] T028 [P] [US2] Create RiskPieChart component in frontend/src/components/dashboard/RiskPieChart.tsx - visual breakdown (use recharts or chart.js)
-- [ ] T029 [P] [US2] Create HighRiskAlerts component in frontend/src/components/dashboard/HighRiskAlerts.tsx - highlighted list of high-risk points
-- [ ] T030 [P] [US2] Create RecentPredictions component in frontend/src/components/dashboard/RecentPredictions.tsx - timeline of recent predictions
-- [ ] T031 [US2] Create DashboardPage in frontend/src/pages/DashboardPage.tsx - compose all dashboard components
-- [ ] T032 [US2] Add dashboard route as home (/) in frontend/src/App.tsx
-- [ ] T033 [US2] Create useUpdatePrediction mutation in frontend/src/hooks/useUpdatePrediction.ts - PATCH /predictions/{id}
-- [ ] T034 [US2] Add confirm/dismiss actions to PredictionCard in frontend/src/components/predictions/PredictionCard.tsx
+- [x] T026 [US2] Create useDashboardSummary hook in frontend/src/hooks/useDashboardSummary.ts - GET /dashboard/summary
+- [x] T027 [P] [US2] Create RiskSummaryCard component in frontend/src/components/dashboard/RiskSummaryCard.tsx - show high/medium/low counts
+- [x] T028 [P] [US2] Create RiskPieChart component in frontend/src/components/dashboard/RiskPieChart.tsx - visual breakdown (use recharts or chart.js)
+- [x] T029 [P] [US2] Create HighRiskAlerts component in frontend/src/components/dashboard/HighRiskAlerts.tsx - highlighted list of high-risk points
+- [x] T030 [P] [US2] Create RecentPredictions component in frontend/src/components/dashboard/RecentPredictions.tsx - timeline of recent predictions
+- [x] T031 [US2] Create DashboardPage in frontend/src/pages/DashboardPage.tsx - compose all dashboard components
+- [x] T032 [US2] Add dashboard route as home (/) in frontend/src/App.tsx
+- [x] T033 [US2] Create useUpdatePrediction mutation in frontend/src/hooks/useUpdatePrediction.ts - PATCH /predictions/{id}
+- [x] T034 [US2] Add confirm/dismiss actions to PredictionCard in frontend/src/components/predictions/PredictionCard.tsx
 
-**Checkpoint**: Dashboard shows risk overview with actionable high-risk alerts
+**Checkpoint**: Dashboard shows risk overview with actionable high-risk alerts ✅
 
 ---
 
