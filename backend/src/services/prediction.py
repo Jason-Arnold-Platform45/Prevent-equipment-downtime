@@ -77,9 +77,9 @@ async def run_prediction_for_point(
         extra={"extra_fields": {"readings_count": len(df)}},
     )
 
-    # Get point with equipment info
+    # Get point info (equipment_id not yet mapped in schema)
     point = await get_point_with_equipment(session, point_id)
-    equipment_id = point.equipment_id if point else None
+    equipment_id = None  # TODO: Map equipment relationship when available
 
     # Context window timestamps
     context_start = df["timestamp"].min()
@@ -111,11 +111,11 @@ async def run_prediction_for_point(
         hours_per_step=1.0,  # Assume hourly readings
     )
 
-    # Create prediction record
+    # Create prediction record (convert enums to string values for DB storage)
     prediction = MoiraiPrediction(
         point_id=point_id,
         equipment_id=equipment_id,
-        risk_level=classification.risk_level,
+        risk_level=classification.risk_level.value,
         confidence_score=classification.confidence_score,
         predicted_failure_start=classification.predicted_failure_start,
         predicted_failure_end=classification.predicted_failure_end,
@@ -128,7 +128,7 @@ async def run_prediction_for_point(
             "anomaly_indices": classification.anomaly_indices,
         },
         model_version=settings.moirai_model,
-        status=PredictionStatus.PENDING,
+        status=PredictionStatus.PENDING.value,
     )
 
     session.add(prediction)
@@ -150,7 +150,7 @@ async def run_prediction_for_point(
 
 
 async def run_moirai_inference(
-    model: object,
+    model: object | None,
     values: np.ndarray,
     timestamps: np.ndarray,
 ) -> tuple[np.ndarray, np.ndarray]:
@@ -158,7 +158,7 @@ async def run_moirai_inference(
     Run Moirai model inference on time series data.
 
     Args:
-        model: MoiraiForecast instance
+        model: MoiraiForecast instance (or None for mock inference)
         values: Array of sensor values
         timestamps: Array of timestamps
 
@@ -166,6 +166,11 @@ async def run_moirai_inference(
         Tuple of (forecast_mean, forecast_std) arrays
     """
     settings = get_settings()
+
+    # Use mock inference if model is not loaded
+    if model is None:
+        logger.warning("Using mock inference (Moirai model not loaded)")
+        return _mock_inference(values, settings.moirai_prediction_length)
 
     try:
         # Import GluonTS for data format
@@ -304,8 +309,10 @@ async def update_prediction_status(
     if not prediction:
         return None
 
-    prediction.status = status
-    if status in (PredictionStatus.CONFIRMED, PredictionStatus.DISMISSED):
+    # Store the string value
+    status_value = status.value if hasattr(status, 'value') else status
+    prediction.status = status_value
+    if status_value in (PredictionStatus.CONFIRMED.value, PredictionStatus.DISMISSED.value):
         prediction.acknowledged_at = datetime.utcnow()
         prediction.acknowledged_by_id = acknowledged_by_id
 
@@ -336,11 +343,12 @@ async def get_risk_counts(
     """Get count of predictions by risk level (pending status only)."""
     query = (
         select(MoiraiPrediction.risk_level, func.count())
-        .where(MoiraiPrediction.status == PredictionStatus.PENDING)
+        .where(MoiraiPrediction.status == PredictionStatus.PENDING.value)
         .group_by(MoiraiPrediction.risk_level)
     )
     result = await session.execute(query)
-    counts = {row[0].value.lower(): row[1] for row in result.fetchall()}
+    # risk_level is stored as string in DB
+    counts = {row[0].lower(): row[1] for row in result.fetchall()}
 
     return {
         "high": counts.get("high", 0),
@@ -370,8 +378,8 @@ async def get_high_risk_points(
     """Get high-risk predictions with pending status."""
     query = (
         select(MoiraiPrediction)
-        .where(MoiraiPrediction.risk_level == RiskLevel.HIGH)
-        .where(MoiraiPrediction.status == PredictionStatus.PENDING)
+        .where(MoiraiPrediction.risk_level == RiskLevel.HIGH.value)
+        .where(MoiraiPrediction.status == PredictionStatus.PENDING.value)
         .order_by(MoiraiPrediction.confidence_score.desc())
         .limit(limit)
     )

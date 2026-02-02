@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from src.lib.logging import get_logger
-from src.models.existing import MonitoringPoint, MonitoringTaskResult
+from src.models.existing import MonitoringPoint, MonitoringTask, MonitoringTaskResult
 
 logger = get_logger(__name__)
 
@@ -32,12 +32,14 @@ async def get_point_readings(
     Returns:
         DataFrame with columns: timestamp, value
     """
+    # Join through MonitoringTask to get results for a point
     query = (
         select(
             MonitoringTaskResult.captured_at,
             MonitoringTaskResult.data,
         )
-        .where(MonitoringTaskResult.point_id == point_id)
+        .join(MonitoringTask, MonitoringTaskResult.task_id == MonitoringTask.id)
+        .where(MonitoringTask.point_id == point_id)
         .order_by(MonitoringTaskResult.captured_at.asc())
     )
 
@@ -89,7 +91,13 @@ async def get_point_readings_count(
     point_id: UUID,
 ) -> int:
     """Get the count of readings for a monitoring point."""
-    query = select(func.count()).where(MonitoringTaskResult.point_id == point_id)
+    # Join through MonitoringTask to count results for a point
+    query = (
+        select(func.count())
+        .select_from(MonitoringTaskResult)
+        .join(MonitoringTask, MonitoringTaskResult.task_id == MonitoringTask.id)
+        .where(MonitoringTask.point_id == point_id)
+    )
     result = await session.execute(query)
     return result.scalar() or 0
 
@@ -101,7 +109,6 @@ async def get_point_with_equipment(
     """Get a monitoring point with its equipment relationship."""
     query = (
         select(MonitoringPoint)
-        .options(selectinload(MonitoringPoint.equipment))
         .where(MonitoringPoint.id == point_id)
     )
     result = await session.execute(query)
@@ -122,9 +129,11 @@ async def get_points_with_min_readings(
     Returns:
         List of point IDs that have sufficient data
     """
+    # Join through MonitoringTask to group by point
     query = (
-        select(MonitoringTaskResult.point_id)
-        .group_by(MonitoringTaskResult.point_id)
+        select(MonitoringTask.point_id)
+        .join(MonitoringTaskResult, MonitoringTaskResult.task_id == MonitoringTask.id)
+        .group_by(MonitoringTask.point_id)
         .having(func.count() >= min_readings)
     )
     result = await session.execute(query)
@@ -136,12 +145,14 @@ async def get_latest_reading(
     point_id: UUID,
 ) -> tuple[float, datetime] | None:
     """Get the most recent reading for a point."""
+    # Join through MonitoringTask to get latest result for a point
     query = (
         select(
             MonitoringTaskResult.data,
             MonitoringTaskResult.captured_at,
         )
-        .where(MonitoringTaskResult.point_id == point_id)
+        .join(MonitoringTask, MonitoringTaskResult.task_id == MonitoringTask.id)
+        .where(MonitoringTask.point_id == point_id)
         .order_by(MonitoringTaskResult.captured_at.desc())
         .limit(1)
     )

@@ -33,13 +33,17 @@ def _prediction_to_response(
     equipment_name: str | None = None,
 ) -> PredictionResponse:
     """Convert a MoiraiPrediction model to response schema."""
+    # Handle both enum and string values for risk_level and status
+    risk_level = prediction.risk_level.value if hasattr(prediction.risk_level, 'value') else prediction.risk_level
+    status = prediction.status.value if hasattr(prediction.status, 'value') else prediction.status
+
     return PredictionResponse(
         id=prediction.id,
         point_id=prediction.point_id,
         point_name=point_name,
         equipment_id=prediction.equipment_id,
         equipment_name=equipment_name,
-        risk_level=prediction.risk_level.value,
+        risk_level=risk_level,
         confidence_score=prediction.confidence_score,
         predicted_failure_start=prediction.predicted_failure_start,
         predicted_failure_end=prediction.predicted_failure_end,
@@ -47,7 +51,7 @@ def _prediction_to_response(
         context_end=prediction.context_end,
         readings_analyzed=prediction.readings_analyzed,
         model_version=prediction.model_version,
-        status=prediction.status.value,
+        status=status,
         acknowledged_by_id=prediction.acknowledged_by_id,
         acknowledged_at=prediction.acknowledged_at,
         created_at=prediction.created_at,
@@ -94,7 +98,7 @@ async def get_dashboard_summary(
     for pred in recent:
         point = await get_point_with_equipment(session, pred.point_id)
         point_name = point.name if point else None
-        equipment_name = point.equipment.name if point and point.equipment else None
+        equipment_name = None  # TODO: Map equipment relationship when available
         recent_predictions.append(
             _prediction_to_response(pred, point_name, equipment_name)
         )
