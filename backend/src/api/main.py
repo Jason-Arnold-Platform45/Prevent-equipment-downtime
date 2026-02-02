@@ -7,6 +7,7 @@ from typing import AsyncGenerator
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 
 from src.api.middleware.error_handler import setup_error_handlers
 from src.api.middleware.logging import RequestLoggingMiddleware
@@ -81,6 +82,11 @@ def create_app() -> FastAPI:
     app.include_router(predictions.router, prefix="/api/v1", tags=["Predictions"])
     app.include_router(points.router, prefix="/api/v1", tags=["Points"])
     app.include_router(dashboard.router, prefix="/api/v1", tags=["Dashboard"])
+
+    @app.get("/", include_in_schema=False)
+    async def root():
+        """Redirect root to API documentation."""
+        return RedirectResponse(url="/docs")
 
     return app
 
