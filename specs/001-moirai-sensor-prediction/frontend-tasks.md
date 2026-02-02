@@ -53,7 +53,7 @@
 
 ---
 
-## Phase 3: User Story 1 - Run Predictions (Priority: P1) MVP
+## Phase 3: User Story 1 - Run Predictions (Priority: P1) MVP ✅
 
 **Goal**: Allow users to trigger predictions and view results for monitoring points
 
@@ -61,20 +61,20 @@
 
 ### Implementation
 
-- [ ] T014 [US1] Create usePoints hook in frontend/src/hooks/usePoints.ts - GET /points with pagination
-- [ ] T015 [US1] Create usePredictions hook in frontend/src/hooks/usePredictions.ts - GET /predictions with filtering
-- [ ] T016 [US1] Create useRunPrediction mutation in frontend/src/hooks/useRunPrediction.ts - POST /predictions/run
-- [ ] T017 [US1] Create useRunAllPredictions mutation in frontend/src/hooks/useRunAllPredictions.ts - POST /predictions/run-all
-- [ ] T018 [P] [US1] Create PointsTable component in frontend/src/components/points/PointsTable.tsx - display points with readings count
-- [ ] T019 [P] [US1] Create PointSelector component in frontend/src/components/points/PointSelector.tsx - multi-select for prediction
-- [ ] T020 [US1] Create PredictionsList component in frontend/src/components/predictions/PredictionsList.tsx - table with risk badges
-- [ ] T021 [US1] Create PredictionCard component in frontend/src/components/predictions/PredictionCard.tsx - detailed view
-- [ ] T022 [US1] Create RunPredictionButton component in frontend/src/components/predictions/RunPredictionButton.tsx - triggers POST /predictions/run-all
-- [ ] T023 [US1] Create PredictionsPage in frontend/src/pages/PredictionsPage.tsx - main predictions view
-- [ ] T024 [US1] Create PointsPage in frontend/src/pages/PointsPage.tsx - list points with "Run Prediction" action
-- [ ] T025 [US1] Add routes for /predictions and /points in frontend/src/App.tsx
+- [x] T014 [US1] Create usePoints hook in frontend/src/hooks/usePoints.ts - GET /points with pagination
+- [x] T015 [US1] Create usePredictions hook in frontend/src/hooks/usePredictions.ts - GET /predictions with filtering
+- [x] T016 [US1] Create useRunPrediction mutation in frontend/src/hooks/useRunPrediction.ts - POST /predictions/run
+- [x] T017 [US1] Create useRunAllPredictions mutation in frontend/src/hooks/useRunAllPredictions.ts - POST /predictions/run-all
+- [x] T018 [P] [US1] Create PointsTable component in frontend/src/components/points/PointsTable.tsx - display points with readings count
+- [x] T019 [P] [US1] Create PointSelector component in frontend/src/components/points/PointSelector.tsx - multi-select for prediction
+- [x] T020 [US1] Create PredictionsList component in frontend/src/components/predictions/PredictionsList.tsx - table with risk badges
+- [x] T021 [US1] Create PredictionCard component in frontend/src/components/predictions/PredictionCard.tsx - detailed view
+- [x] T022 [US1] Create RunPredictionButton component in frontend/src/components/predictions/RunPredictionButton.tsx - triggers POST /predictions/run-all
+- [x] T023 [US1] Create PredictionsPage in frontend/src/pages/PredictionsPage.tsx - main predictions view
+- [x] T024 [US1] Create PointsPage in frontend/src/pages/PointsPage.tsx - list points with "Run Prediction" action
+- [x] T025 [US1] Add routes for /predictions and /points in frontend/src/App.tsx
 
-**Checkpoint**: Can run predictions from UI and see results
+**Checkpoint**: Can run predictions from UI and see results ✅
 
 ---
 
