@@ -11,6 +11,7 @@ from pydantic import BaseModel
 
 from src.lib.config import get_settings
 from src.services.database import check_connection
+from src.services.model_cache import get_moirai_model
 
 router = APIRouter()
 
@@ -47,8 +48,6 @@ async def health_check() -> HealthResponse:
     db_connected = await check_connection()
 
     # Check model
-    from src.api.main import get_moirai_model
-
     model = get_moirai_model()
     model_loaded = model is not None
 
