@@ -122,14 +122,14 @@
 
 **Purpose**: Production readiness and Railway deployment
 
-- [ ] T040 [P] Create PointDetailPage in frontend/src/pages/PointDetailPage.tsx - show readings chart with usePointReadings hook
-- [ ] T041 [P] Create PredictionDetailPage in frontend/src/pages/PredictionDetailPage.tsx - full prediction details
-- [ ] T042 [P] Add loading skeletons to all data-fetching components
-- [ ] T043 [P] Add empty states for no data scenarios
-- [ ] T044 [P] Add toast notifications for success/error feedback (use react-hot-toast)
-- [ ] T045 Implement responsive design for mobile/tablet views
-- [ ] T046 [P] Create frontend/Dockerfile for Railway deployment
-- [ ] T047 [P] Create frontend/railway.toml with static site config
+- [x] T040 [P] Create PointDetailPage in frontend/src/pages/PointDetailPage.tsx - show readings chart with usePointReadings hook
+- [x] T041 [P] Create PredictionDetailPage in frontend/src/pages/PredictionDetailPage.tsx - full prediction details
+- [x] T042 [P] Add loading skeletons to all data-fetching components
+- [x] T043 [P] Add empty states for no data scenarios
+- [x] T044 [P] Add toast notifications for success/error feedback (use react-hot-toast)
+- [x] T045 Implement responsive design for mobile/tablet views
+- [x] T046 [P] Create frontend/Dockerfile for Railway deployment
+- [x] T047 [P] Create frontend/railway.toml with static site config
 - [ ] T048 Deploy frontend to Railway: `railway up --service moirai-dashboard`
 - [ ] T049 Configure CORS in backend if needed for frontend domain
 - [ ] T050 Test full E2E flow on deployed frontend

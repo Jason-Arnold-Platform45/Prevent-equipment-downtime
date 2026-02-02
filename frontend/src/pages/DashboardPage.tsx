@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast'
 import { PageSpinner, Button, Card } from '../components/ui'
 import {
   RiskSummaryCard,
@@ -12,12 +13,12 @@ export function DashboardPage() {
   const { data, isLoading, error, refetch } = useDashboardSummary()
 
   const handleRunSuccess = (result: { eligible_points: number; predictions_created: number }) => {
-    alert(`Created ${result.predictions_created} predictions for ${result.eligible_points} eligible points`)
+    toast.success(`Created ${result.predictions_created} predictions for ${result.eligible_points} eligible points`)
     refetch()
   }
 
   const handleRunError = (error: Error) => {
-    alert(`Error: ${error.message}`)
+    toast.error(`Error: ${error.message}`)
   }
 
   if (isLoading) {
@@ -41,7 +42,7 @@ export function DashboardPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
           <p className="text-gray-600">Sensor failure prediction overview</p>

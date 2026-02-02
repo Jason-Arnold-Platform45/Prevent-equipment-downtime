@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Card, PageSpinner, Button } from '../components/ui'
+import toast from 'react-hot-toast'
+import { Card, PageSpinner, Button, NoPoints } from '../components/ui'
 import { PointsTable } from '../components/points'
 import { usePoints, useRunPrediction } from '../hooks'
 import type { Point } from '../types/api'
@@ -16,24 +17,22 @@ export function PointsPage() {
   const runPrediction = useRunPrediction()
 
   const handleRunPrediction = (point: Point) => {
-    if (confirm(`Run prediction for "${point.name}"?`)) {
-      runPrediction.mutate(
-        { point_ids: [point.id] },
-        {
-          onSuccess: (result) => {
-            if (result.predictions_created > 0) {
-              alert(`Prediction created successfully!`)
-            } else if (result.errors.length > 0) {
-              alert(`Error: ${result.errors[0].error}`)
-            }
-            refetch()
-          },
-          onError: (error) => {
-            alert(`Error: ${error.message}`)
-          },
-        }
-      )
-    }
+    runPrediction.mutate(
+      { point_ids: [point.id] },
+      {
+        onSuccess: (result) => {
+          if (result.predictions_created > 0) {
+            toast.success(`Prediction created for "${point.name}"`)
+          } else if (result.errors.length > 0) {
+            toast.error(`Error: ${result.errors[0].error}`)
+          }
+          refetch()
+        },
+        onError: (error) => {
+          toast.error(`Error: ${error.message}`)
+        },
+      }
+    )
   }
 
   if (isLoading) {
@@ -55,7 +54,7 @@ export function PointsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Monitoring Points</h1>
           <p className="text-gray-600">View sensors and run predictions</p>
@@ -101,9 +100,7 @@ export function PointsPage() {
             )}
           </>
         ) : (
-          <div className="text-center py-12 text-gray-500">
-            <p>No monitoring points found</p>
-          </div>
+          <NoPoints />
         )}
       </Card>
     </div>

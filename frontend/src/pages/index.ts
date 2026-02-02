@@ -1,3 +1,5 @@
 export { DashboardPage } from './DashboardPage'
 export { PredictionsPage } from './PredictionsPage'
 export { PointsPage } from './PointsPage'
+export { PointDetailPage } from './PointDetailPage'
+export { PredictionDetailPage } from './PredictionDetailPage'

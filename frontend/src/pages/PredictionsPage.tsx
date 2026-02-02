@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import toast from 'react-hot-toast'
 import { Card, CardTitle, PageSpinner, Button } from '../components/ui'
 import { PredictionsList, PredictionCard, RunPredictionButton } from '../components/predictions'
 import { ExportButton } from '../components/export'
@@ -22,12 +23,12 @@ export function PredictionsPage() {
   const exportPredictions = useExportPredictions()
 
   const handleRunSuccess = (result: { eligible_points: number; predictions_created: number }) => {
-    alert(`Created ${result.predictions_created} predictions for ${result.eligible_points} eligible points`)
+    toast.success(`Created ${result.predictions_created} predictions for ${result.eligible_points} eligible points`)
     refetch()
   }
 
   const handleRunError = (error: Error) => {
-    alert(`Error: ${error.message}`)
+    toast.error(`Error: ${error.message}`)
   }
 
   const handleConfirm = () => {
@@ -38,9 +39,10 @@ export function PredictionsPage() {
         onSuccess: (updatedPrediction) => {
           setSelectedPrediction(updatedPrediction)
           refetch()
+          toast.success('Prediction confirmed')
         },
         onError: (error) => {
-          alert(`Error: ${error.message}`)
+          toast.error(`Error: ${error.message}`)
         },
       }
     )
@@ -54,9 +56,10 @@ export function PredictionsPage() {
         onSuccess: (updatedPrediction) => {
           setSelectedPrediction(updatedPrediction)
           refetch()
+          toast.success('Prediction dismissed')
         },
         onError: (error) => {
-          alert(`Error: ${error.message}`)
+          toast.error(`Error: ${error.message}`)
         },
       }
     )
@@ -70,10 +73,10 @@ export function PredictionsPage() {
       },
       {
         onSuccess: ({ filename }) => {
-          alert(`Exported to ${filename}`)
+          toast.success(`Exported to ${filename}`)
         },
         onError: (error) => {
-          alert(`Export failed: ${error.message}`)
+          toast.error(`Export failed: ${error.message}`)
         },
       }
     )
@@ -96,12 +99,12 @@ export function PredictionsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Predictions</h1>
           <p className="text-gray-600">View and manage sensor failure predictions</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <ExportButton onExport={handleExport} isExporting={exportPredictions.isPending} />
           <RunPredictionButton onSuccess={handleRunSuccess} onError={handleRunError} />
         </div>
