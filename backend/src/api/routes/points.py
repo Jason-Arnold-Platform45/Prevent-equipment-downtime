@@ -35,13 +35,17 @@ def _prediction_to_response(prediction) -> PredictionResponse | None:
     if not prediction:
         return None
 
+    # Handle both enum and string values (DB stores as string)
+    risk_level = prediction.risk_level.value if hasattr(prediction.risk_level, 'value') else prediction.risk_level
+    status = prediction.status.value if hasattr(prediction.status, 'value') else prediction.status
+
     return PredictionResponse(
         id=prediction.id,
         point_id=prediction.point_id,
         point_name=None,
         equipment_id=prediction.equipment_id,
         equipment_name=None,
-        risk_level=prediction.risk_level.value,
+        risk_level=risk_level,
         confidence_score=prediction.confidence_score,
         predicted_failure_start=prediction.predicted_failure_start,
         predicted_failure_end=prediction.predicted_failure_end,
@@ -49,7 +53,7 @@ def _prediction_to_response(prediction) -> PredictionResponse | None:
         context_end=prediction.context_end,
         readings_analyzed=prediction.readings_analyzed,
         model_version=prediction.model_version,
-        status=prediction.status.value,
+        status=status,
         acknowledged_by_id=prediction.acknowledged_by_id,
         acknowledged_at=prediction.acknowledged_at,
         created_at=prediction.created_at,
