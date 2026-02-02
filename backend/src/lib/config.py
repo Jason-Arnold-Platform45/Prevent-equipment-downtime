@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     database_url: str
 
     # Moirai Model
-    moirai_model: str = "Salesforce/moirai-1.0-R-base"
+    moirai_model: str = "Salesforce/moirai-1.0-R-large"
     moirai_context_length: int = 100
     moirai_prediction_length: int = 24
     moirai_num_samples: int = 100
