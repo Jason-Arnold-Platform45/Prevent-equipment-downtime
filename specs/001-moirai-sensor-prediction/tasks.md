@@ -104,17 +104,17 @@
 
 ---
 
-## Phase 6: Polish & Deployment
+## Phase 6: Polish & Deployment ✅
 
 **Purpose**: Production readiness and deployment to Railway
 
-- [ ] T035 [P] Add CLI command for batch predictions in backend/src/cli.py using Typer
-- [ ] T036 [P] Create sample data loader script in backend/scripts/seed_test_data.py for local testing
+- [x] T035 [P] Add CLI command for batch predictions in backend/src/cli.py using Typer
+- [x] T036 [P] Create sample data loader script in backend/scripts/seed_test_data.py for local testing
 - [x] T037 Run migration on Railway database: railway run python -m migrations.run
 - [ ] T038 Deploy to Railway: railway up
-- [ ] T039 [P] Update quickstart.md with actual Railway deployment commands
+- [x] T039 [P] Update quickstart.md with actual Railway deployment commands
 - [ ] T040 Test full prediction flow on Railway deployment
-- [ ] T041 [P] Add request logging middleware in backend/src/api/middleware/logging.py
+- [x] T041 [P] Add request logging middleware in backend/src/api/middleware/logging.py
 
 ---
 
@@ -247,7 +247,7 @@ def classify_risk(forecast_mean: float, forecast_std: float, threshold: float) -
 | Phase 3 (US1 - MVP) | 12/12 ✅ |
 | Phase 4 (US2) | 3/3 ✅ |
 | Phase 5 (US3) | 2/2 ✅ |
-| Phase 6 (Polish) | 1/7 |
+| Phase 6 (Polish) | 5/7 |
 | Bug Fixes | 4/4 ✅ |
 
 **MVP Scope**: T001-T029 (29 tasks) delivers working prediction API connected to EAIMMS database. ✅ **COMPLETE**

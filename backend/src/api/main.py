@@ -9,6 +9,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.api.middleware.error_handler import setup_error_handlers
+from src.api.middleware.logging import RequestLoggingMiddleware
 from src.api.routes import dashboard, health, points, predictions
 from src.lib.config import get_settings
 from src.lib.logging import get_logger, setup_logging
@@ -68,6 +69,9 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # Request logging middleware
+    app.add_middleware(RequestLoggingMiddleware)
 
     # Error handlers
     setup_error_handlers(app)

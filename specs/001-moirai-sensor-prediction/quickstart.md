@@ -212,6 +212,38 @@ backend/
 └── railway.toml
 ```
 
+## CLI Commands
+
+The CLI provides commands for running predictions and managing data:
+
+```bash
+# Check system health (database, model status)
+python -m src.cli health
+
+# List monitoring points
+python -m src.cli list-points
+python -m src.cli list-points --page 2 --page-size 50
+python -m src.cli list-points --with-predictions
+
+# Run prediction for a single point
+python -m src.cli predict <point-uuid>
+
+# Run predictions for all eligible points
+python -m src.cli predict-all
+python -m src.cli predict-all --min-readings 10
+python -m src.cli predict-all --dry-run  # Preview without running
+```
+
+### Data Seeding (Local Development)
+
+```bash
+# Seed test data
+python -m scripts.seed_test_data seed --points 5 --readings 50
+
+# View database statistics
+python -m scripts.seed_test_data stats
+```
+
 ## Common Commands
 
 ```bash
@@ -227,12 +259,6 @@ ruff check src tests
 
 # Type check
 mypy src
-
-# Run CLI prediction
-python -m src.cli predict --point-id <uuid>
-
-# Run all predictions via CLI
-python -m src.cli predict-all
 ```
 
 ## Troubleshooting
