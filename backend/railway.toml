@@ -1,10 +1,16 @@
 [build]
-builder = "dockerfile"
-dockerfilePath = "Dockerfile"
+builder = "nixpacks"
+
+[build.nixpacks]
+nixPkgs = ["python311"]
+aptPkgs = ["libpq-dev"]
+
+[phases.install]
+cmds = ["pip install -r requirements-railway.txt"]
 
 [deploy]
 startCommand = "uvicorn src.api.main:app --host 0.0.0.0 --port $PORT"
 healthcheckPath = "/api/v1/health"
-healthcheckTimeout = 60
+healthcheckTimeout = 120
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
