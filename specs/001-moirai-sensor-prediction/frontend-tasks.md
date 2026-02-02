@@ -14,7 +14,7 @@
 
 ---
 
-## Phase 1: Setup
+## Phase 1: Setup ✅
 
 **Purpose**: Project initialization and development environment
 
@@ -27,29 +27,29 @@
 
 ---
 
-## Phase 2: Foundational (Core Infrastructure)
+## Phase 2: Foundational (Core Infrastructure) ✅
 
 **Purpose**: API client, types, and shared components that all user stories depend on
 
 **CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T007 Create API client with Axios in frontend/src/lib/api.ts - base URL from env, error handling
-- [ ] T008 [P] Generate TypeScript types from OpenAPI in frontend/src/types/api.ts (Prediction, Point, DashboardSummary, etc.)
-- [ ] T009 [P] Create React Query hooks setup in frontend/src/lib/queryClient.ts
-- [ ] T010 [P] Create shared UI components in frontend/src/components/ui/:
+- [x] T007 Create API client with Axios in frontend/src/lib/api.ts - base URL from env, error handling
+- [x] T008 [P] Generate TypeScript types from OpenAPI in frontend/src/types/api.ts (Prediction, Point, DashboardSummary, etc.)
+- [x] T009 [P] Create React Query hooks setup in frontend/src/lib/queryClient.ts
+- [x] T010 [P] Create shared UI components in frontend/src/components/ui/:
   - Button.tsx
   - Card.tsx
   - Badge.tsx (for risk levels: HIGH=red, MEDIUM=yellow, LOW=green)
   - Spinner.tsx
   - Table.tsx
-- [ ] T011 [P] Create layout components in frontend/src/components/layout/:
+- [x] T011 [P] Create layout components in frontend/src/components/layout/:
   - AppLayout.tsx (sidebar + main content area)
   - Header.tsx
   - Sidebar.tsx
-- [ ] T012 Create router setup in frontend/src/App.tsx with React Router
-- [ ] T013 [P] Create error boundary component in frontend/src/components/ErrorBoundary.tsx
+- [x] T012 Create router setup in frontend/src/App.tsx with React Router
+- [x] T013 [P] Create error boundary component in frontend/src/components/ErrorBoundary.tsx
 
-**Checkpoint**: Can run `npm run dev` and see basic layout with navigation
+**Checkpoint**: Can run `npm run dev` and see basic layout with navigation ✅
 
 ---
 
