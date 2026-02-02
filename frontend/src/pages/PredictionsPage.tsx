@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Card, CardTitle, PageSpinner, Button } from '../components/ui'
 import { PredictionsList, PredictionCard, RunPredictionButton } from '../components/predictions'
-import { usePredictions, useUpdatePrediction } from '../hooks'
-import type { Prediction, RiskLevel, PredictionStatus } from '../types/api'
+import { ExportButton } from '../components/export'
+import { usePredictions, useUpdatePrediction, useExportPredictions } from '../hooks'
+import type { Prediction, RiskLevel, PredictionStatus, ExportFormat } from '../types/api'
 
 export function PredictionsPage() {
   const [selectedPrediction, setSelectedPrediction] = useState<Prediction | null>(null)
@@ -18,6 +19,7 @@ export function PredictionsPage() {
   })
 
   const updatePrediction = useUpdatePrediction()
+  const exportPredictions = useExportPredictions()
 
   const handleRunSuccess = (result: { eligible_points: number; predictions_created: number }) => {
     alert(`Created ${result.predictions_created} predictions for ${result.eligible_points} eligible points`)
@@ -60,6 +62,23 @@ export function PredictionsPage() {
     )
   }
 
+  const handleExport = (format: ExportFormat) => {
+    exportPredictions.mutate(
+      {
+        format,
+        risk_level: filters.risk_level,
+      },
+      {
+        onSuccess: ({ filename }) => {
+          alert(`Exported to ${filename}`)
+        },
+        onError: (error) => {
+          alert(`Export failed: ${error.message}`)
+        },
+      }
+    )
+  }
+
   if (isLoading) {
     return <PageSpinner />
   }
@@ -82,7 +101,10 @@ export function PredictionsPage() {
           <h1 className="text-2xl font-bold text-gray-900">Predictions</h1>
           <p className="text-gray-600">View and manage sensor failure predictions</p>
         </div>
-        <RunPredictionButton onSuccess={handleRunSuccess} onError={handleRunError} />
+        <div className="flex items-center gap-3">
+          <ExportButton onExport={handleExport} isExporting={exportPredictions.isPending} />
+          <RunPredictionButton onSuccess={handleRunSuccess} onError={handleRunError} />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

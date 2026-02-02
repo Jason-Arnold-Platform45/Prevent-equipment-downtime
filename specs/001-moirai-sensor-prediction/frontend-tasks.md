@@ -100,7 +100,7 @@
 
 ---
 
-## Phase 5: User Story 3 - Export Predictions (Priority: P3)
+## Phase 5: User Story 3 - Export Predictions (Priority: P3) ✅
 
 **Goal**: Enable export of prediction data for maintenance planning systems
 
@@ -108,13 +108,13 @@
 
 ### Implementation
 
-- [ ] T035 [US3] Create useExportPredictions hook in frontend/src/hooks/useExportPredictions.ts - GET /predictions/export
-- [ ] T036 [P] [US3] Create ExportButton component in frontend/src/components/export/ExportButton.tsx - dropdown with CSV/JSON options
-- [ ] T037 [P] [US3] Create ExportFilters component in frontend/src/components/export/ExportFilters.tsx - date range and risk level filters
-- [ ] T038 [US3] Add export functionality to PredictionsPage in frontend/src/pages/PredictionsPage.tsx
-- [ ] T039 [US3] Implement file download utility in frontend/src/lib/download.ts - handle blob response
+- [x] T035 [US3] Create useExportPredictions hook in frontend/src/hooks/useExportPredictions.ts - GET /predictions/export
+- [x] T036 [P] [US3] Create ExportButton component in frontend/src/components/export/ExportButton.tsx - dropdown with CSV/JSON options
+- [x] T037 [P] [US3] Create ExportFilters component in frontend/src/components/export/ExportFilters.tsx - date range and risk level filters
+- [x] T038 [US3] Add export functionality to PredictionsPage in frontend/src/pages/PredictionsPage.tsx
+- [x] T039 [US3] Implement file download utility in frontend/src/lib/download.ts - handle blob response
 
-**Checkpoint**: Can export filtered predictions as CSV or JSON file
+**Checkpoint**: Can export filtered predictions as CSV or JSON file ✅
 
 ---
 
